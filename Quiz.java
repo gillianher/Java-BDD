@@ -65,7 +65,7 @@ public class Quiz {
                 }
                 pts=pts+diff;
             }
-            System.out.println("Félicitations vous avez eu "+pts+" points sur 20 possibles!");
+            System.out.println("Félicitations vous avez eu "+pts+" points!");
 
 
     } catch (SQLException e) {
