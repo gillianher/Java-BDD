@@ -1,3 +1,4 @@
+
 import java.sql.*;
 import java.util.Scanner;
 
@@ -12,35 +13,47 @@ public class Quiz {
         String url = "jdbc:mysql://localhost:3306/quiz";
         Connection connection;
         Statement stmt;
+        int pts=0;
         ResultSet geo;
-        int pts=10;
         String tent;
         String query;
-        int theme=0;
-
+        int diff=0;
         Scanner sc=new Scanner(System.in);
+        final String BLACK = "\033[0;30m";
+        final String white = "\033[47m";
+        final String green = "\033[42m";
+        final String blue = "\033[44m";
+        final String red = "\u001B[41m";
+        final String bred = "\033[1;31m";
+        final String r = "\u001B[0m";
 
-        System.out.println(" ________________________________________________________________________________________");
-        System.out.println("|       Bienvenue dans ce quiz de géographie, vous partirez avec 10 points               |");
-        System.out.println("|   Vous aurez ensuite une série de 10 questions qui détermineront votre nombre de points|");
-        System.out.println("|________________________________________________________________________________________|");
+        System.out.println(bred+" ________________________________________________________________________________________"+r);
+        System.out.println(bred+"|       Bienvenue dans ce quiz de géographie. Vous partirez avec 0 points                |"+r);
+        System.out.println(bred+"|   Vous aurez ensuite une série de questions qui détermineront votre nombre de points   |"+r);
+        System.out.println(bred+"|________________________________________________________________________________________|"+r);
         System.out.println("");
-        System.out.println("Choisis un theme en indiquant son numero : ");
-        System.out.println("1/ Géographie     2/ Histoire");
-        theme= Integer.parseInt(sc.nextLine());
+        System.out.println("Choisis une difficulté en indiquant le numéro correspondant : ");
+        System.out.println("1/"+white+"Facile"+r+"       2/"+green+"Intermédiaire"+r+"       3/"+blue+"Moyen"+r+"       4/"+red+"Difficile"+r+"        5/Impossible     6/"+white+"Mix "+r+""+green+"de "+r+""+blue+"tous "+r+""+red+"les "+r+"niveaux");
+        diff= Integer.parseInt(sc.nextLine());
 
-        //Si on veut faire différents themes    On peut aussi le faire en faisant plusieurs BDD
-
-        query=String.format("Select * from quizz Where theme=%d",theme);
+        query=String.format("Select * from quizz Where Difficulte=%d",diff);
+        if (diff==6){
+            query="Select * from quizz";
+        }
         try{
             connection = DriverManager.getConnection(url,"root","");
             stmt = connection.createStatement();
 
             geo = stmt.executeQuery(query);
+            System.out.println("Vous avez choisi un questionnaire de géographie de niveau "+diff+", Bonne chance !");
+            if (diff==6) {
+                System.out.println("Vous avez choisi un questionnaire de géographie contenant un mix de toutes les difficultés");
+            }
 
+            System.out.println(red+"ATTENTION A L'ORTHOGRAPHE!!!!!"+r);
             System.out.println(geo);
             while (geo.next()){
-                System.out.println("Question : "+geo.getString("Intitule")+"?");
+                System.out.println("Question a "+geo.getInt("Difficulte")+" point(s) : "+geo.getString("Intitule")+"?");
 
                 System.out.println("Votre réponse : ");
                 tent=sc.nextLine();
@@ -50,7 +63,7 @@ public class Quiz {
                     tent=sc.nextLine();
                     pts--;
                 }
-                pts++;
+                pts=pts+diff;
             }
             System.out.println("Félicitations vous avez eu "+pts+" points sur 20 possibles!");
 
